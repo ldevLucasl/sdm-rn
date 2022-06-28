@@ -1,20 +1,34 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { StatusBar } from "expo-status-bar";
+import { SafeAreaView } from "react-native";
+import Routes from "./src/routes";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
+  const [token, setToken] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const load = async () => {
+      if (token) {
+        const token = await AsyncStorage.getItem("token");
+        setToken(token);
+      } else {
+        await AsyncStorage.setItem("token", new Date().getTime().toString());
+      }
+    };
+
+    load();
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: `#282a36`,
+      }}
+    >
+      <StatusBar translucent={false} style="light" />
+      <Routes />
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
